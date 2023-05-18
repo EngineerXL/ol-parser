@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, BigInteger, Text
+from sqlalchemy import create_engine, select, Column, BigInteger, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -24,6 +24,24 @@ class Member(Base):
     middlename = Column(Text)
     surname = Column(Text)
     group = Column(Text)
+
+
+def make_stmt(member):
+    return select(Member).where(
+        Member.surname == member["surname"],
+        Member.firstname == member["firstname"],
+        Member.middlename == member["middlename"],
+        Member.group == member["group"],
+    )
+
+
+def make_db_member(member):
+    return Member(
+        surname=member["surname"],
+        firstname=member["firstname"],
+        middlename=member["middlename"],
+        group=member["group"],
+    )
 
 
 class Team(Base):

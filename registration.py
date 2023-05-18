@@ -2,39 +2,17 @@ import csv
 import utils
 
 from db import *
-from sqlalchemy import select
 
 
-def register_to_csv(url=None, mode="teams", fname_out="registration.csv"):
-    utils.save_from_url(url, fname_out)
-
-
-def get_members(a):
-    res = [["" for _ in range(4)] for _ in range(3)]
-    for i in range(4):
-        res[0][i] = a[1 + 0 + i].strip()
-        res[1][i] = a[1 + 7 + i].strip()
-        res[2][i] = a[1 + 14 + i].strip()
-    return res
-
-
-def parse_table_raw(row, db):
-    members = get_members(row)
+def parse_team_row(row, db):
+    members = utils.get_members(row, n=3)
     ids, surnames_ar = [], []
-    for elem in members:
-        if elem[0] == "-":
+    for member in members:
+        if member["surname"] == "":
             continue
-        stmt = select(Member).where(
-            Member.surname == elem[0],
-            Member.firstname == elem[1],
-            Member.middlename == elem[2],
-            Member.group == elem[3],
-        )
+        stmt = make_stmt(member)
         if db.execute(stmt).first() is None:
-            db_member = Member(
-                surname=elem[0], firstname=elem[1], middlename=elem[2], group=elem[3]
-            )
-            db.add(db_member)
+            db.add(make_db_member(member))
             db.commit()
         res = db.execute(stmt).first()[0]
         surnames_ar.append(res.surname)
@@ -48,10 +26,25 @@ def parse_table_raw(row, db):
         db.commit()
 
 
-def register_pg(mode="teams", fname_in="registration.csv"):
+def parse_junior_row(row, db):
+    member = utils.get_members(row, n=1)[0]
+    stmt = make_stmt(member)
+    if db.execute(stmt).first() is None:
+        db.add(make_db_member(member))
+        db.commit()
+
+
+def parse_table_row(row, db, mode="teams"):
+    if mode == "teams":
+        parse_team_row(row, db)
+    elif mode == "junior":
+        parse_junior_row(row, db)
+
+
+def register_pg(fname_in="registration.csv", mode="teams"):
     pg = make_session()
     with open(fname_in, "r") as fin_csv:
         fin = csv.reader(fin_csv)
         next(fin)
         for row in fin:
-            parse_table_raw(row, pg)
+            parse_table_row(row, pg, mode=mode)
