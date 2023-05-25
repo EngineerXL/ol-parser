@@ -73,7 +73,7 @@ def calc_results(contestant_scores, mode="teams", fname_in="standings.csv"):
             parse_result(row, db, contestant_scores, mode=mode)
 
 
-def save_juniors_results(contestants, fname_out="results.csv"):
+def save_juniors_results(contestant_scores, fname_out="results.csv"):
     # ToDo
     return
 
@@ -82,11 +82,16 @@ def save_teams_results(contestant_scores, course="1b", fname_out="results.csv"):
     db = make_session()
     with open(fname_out, "w") as fout_csv:
         fout = csv.writer(fout_csv)
+        fout.writerow(
+            ["N", "Фамилия", "Имя", "Отчество", "Группа", "Решено", "Дорешано"]
+        )
+        cnt = 1
         for id, score in contestant_scores.items():
             db_member = db.get(Member, id)
             if not groups_regex.check(db_member.group, course):
                 continue
             row = [
+                cnt,
                 db_member.surname,
                 db_member.firstname,
                 db_member.middlename,
@@ -94,4 +99,5 @@ def save_teams_results(contestant_scores, course="1b", fname_out="results.csv"):
                 score["solved"],
                 score["upsolved"],
             ]
+            cnt += 1
             fout.writerow(row)
