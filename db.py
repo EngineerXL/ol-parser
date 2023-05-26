@@ -24,6 +24,7 @@ class Member(Base):
     middlename = Column(Text)
     surname = Column(Text)
     group = Column(Text)
+    nickname = Column(Text)
 
 
 def make_stmt(member):
@@ -35,12 +36,23 @@ def make_stmt(member):
     )
 
 
+def make_nickname(member):
+    ar = [
+        member["surname"],
+        member["firstname"],
+        member["middlename"],
+        member["group"],
+    ]
+    return " ".join([elem for elem in ar if elem is not None])
+
+
 def make_db_member(member):
     return Member(
         surname=member["surname"],
         firstname=member["firstname"],
         middlename=member["middlename"],
         group=member["group"],
+        nickname=make_nickname(member),
     )
 
 

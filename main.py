@@ -3,19 +3,7 @@ import registration
 import standings
 import utils
 
-URL_STANDINGS_TEAMS = (
-    "https://codeforces.com/spectator/ranklist/053d4ae7c01d798cb3c34dc6327a5aa7"
-)
-URL_STANDINGS_JUNIOR = (
-    "https://codeforces.com/spectator/ranklist/688ae72c8604c282ed911633e34d7f55"
-)
-URL_RUCODE_CF = (
-    "https://official.contest.yandex.ru/rucode6.5/contest/48589/standings/?p="
-)
-
-URL_RUCODE_AB = (
-    "https://official.contest.yandex.ru/rucode6.5/contest/48590/standings/?p="
-)
+from urls import *
 
 DATA_FOLDER = "./data/"
 DOWNLOAD = True
@@ -32,61 +20,54 @@ if __name__ == "__main__":
     )
     standings.cf_to_csv(
         url=URL_STANDINGS_JUNIOR,
-        prefix=DATA_FOLDER,
-        suffix="junior",
+        fname_out=DATA_FOLDER + "standings_junior.csv",
     )
     standings.cf_to_csv(
         url=URL_STANDINGS_TEAMS,
-        prefix=DATA_FOLDER,
-        suffix="teams",
+        fname_out=DATA_FOLDER + "standings_teams.csv",
     )
     standings.ya_to_csv(
         url=URL_RUCODE_CF,
-        prefix=DATA_FOLDER,
-        suffix="rucode_cf",
+        fname_out=DATA_FOLDER + "standings_rucode_cf.csv",
     )
     standings.ya_to_csv(
         url=URL_RUCODE_AB,
-        prefix=DATA_FOLDER,
-        suffix="rucode_ab",
+        fname_out=DATA_FOLDER + "standings_rucode_ab.csv",
     )
     contestants = dict()
     calculator.calc_results(
         contestants,
         mode="teams",
         fname_in=DATA_FOLDER + "standings_teams.csv",
+        verbose=True,
     )
     calculator.calc_results(
         contestants,
         mode="junior",
         fname_in=DATA_FOLDER + "standings_junior.csv",
+        verbose=True,
     )
-    calculator.save_juniors_results(
+    calculator.calc_results(
         contestants,
-        fname_out=DATA_FOLDER + "results_juniors.csv",
+        mode="teams",
+        key_base="rucode",
+        fname_in=DATA_FOLDER + "standings_rucode_ab.csv",
     )
-    calculator.save_teams_results(
+    calculator.calc_results(
         contestants,
-        course="2b",
-        fname_out=DATA_FOLDER + "results_2b.csv",
+        mode="teams",
+        key_base="rucode",
+        fname_in=DATA_FOLDER + "standings_rucode_cf.csv",
     )
-    calculator.save_teams_results(
+    calculator.save_results(
+        contestants,
+        course="1b",
+        key_scores={"solved": 3, "upsolved": 1, "skat": -6, "olymp": 6, "opencup": 1},
+        fname_out=DATA_FOLDER + "results_1b.csv",
+    )
+    calculator.save_results(
         contestants,
         course="3b",
+        key_scores={"solved": 3, "upsolved": 1, "skat": -6, "rucode": 6},
         fname_out=DATA_FOLDER + "results_3b.csv",
-    )
-    calculator.save_teams_results(
-        contestants,
-        course="4b",
-        fname_out=DATA_FOLDER + "results_4b.csv",
-    )
-    calculator.save_teams_results(
-        contestants,
-        course="1m",
-        fname_out=DATA_FOLDER + "results_1m.csv",
-    )
-    calculator.save_teams_results(
-        contestants,
-        course="2m",
-        fname_out=DATA_FOLDER + "results_2m.csv",
     )

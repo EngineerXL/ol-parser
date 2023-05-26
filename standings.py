@@ -9,8 +9,7 @@ def get_html_standings(url):
     return r.text
 
 
-def cf_to_csv(url=None, prefix="./data/", suffix="teams"):
-    fname_out = prefix + "standings_" + suffix + ".csv"
+def cf_to_csv(url, fname_out="./data/standings_teams.csv"):
     soup = BeautifulSoup(get_html_standings(url), "lxml")
     table = soup.find("table", class_="standings")
     df = pd.read_html(str(table))[0]
@@ -19,8 +18,7 @@ def cf_to_csv(url=None, prefix="./data/", suffix="teams"):
 
 
 # На ЯКе нужно листать страницы, чтобы получить всю таблицу
-def ya_to_csv(url=None, prefix="./data/", suffix="teams"):
-    fname_out = prefix + "standings_" + suffix + ".csv"
+def ya_to_csv(url, fname_out="./data/standings_teams.csv"):
     i = 1
     df = pd.DataFrame()
     while True:

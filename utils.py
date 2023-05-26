@@ -11,7 +11,7 @@ def save_from_url(url=None, fname=None):
 
 def get_value(s):
     t = s.strip()
-    return "" if t == "-" else t
+    return None if t == "-" else t
 
 
 OFFSET = 1

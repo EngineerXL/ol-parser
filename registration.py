@@ -8,7 +8,7 @@ def parse_team_row(row, db):
     members = utils.get_members(row, n=3)
     ids, surnames_ar = [], []
     for member in members:
-        if member["surname"] == "":
+        if member["surname"] is None:
             continue
         stmt = make_stmt(member)
         if db.execute(stmt).first() is None:
