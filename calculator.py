@@ -1,11 +1,13 @@
 import csv
 import groups_regex
+import utils
 
 from db import *
 from sqlalchemy import select
 
 
 def get_surnames_ar(s):
+    s = s.strip()
     pos = s.find("(")
     if pos == -1:
         raise BaseException(('Could not resolve team name: "%s"' % s))
@@ -23,7 +25,10 @@ def add_results(contestant_scores, id, key, solved):
 
 def make_key(s, key_base=None):
     if key_base:
-        return key_base
+        if key_base == "olymp":
+            return "upsolved" if "*" in s else "olymp"
+        else:
+            return key_base
     else:
         return "upsolved" if "*" in s else "solved"
 
@@ -67,11 +72,14 @@ def upd_junior_results(s, db, contestant_scores, key_base, cnt):
 
 
 def parse_result(
-    row, db, contestant_scores, mode="teams", key_base=None, verbose=False
+    row,
+    db,
+    contestant_scores,
+    mode="teams",
+    key_base=None,
+    verbose=False,
 ):
-    cnt = 0
-    for elem in row[1:]:
-        cnt += 1 if "+" in elem else 0
+    cnt = utils.count_solved(row[1:])
     try:
         if mode == "teams":
             upd_team_results(row[0], db, contestant_scores, key_base, cnt)
@@ -80,6 +88,15 @@ def parse_result(
     except BaseException as ex:
         if verbose:
             print(ex)
+
+
+def get_tasks(header):
+    res = []
+    for el in header[1:]:
+        if "A" in el:
+            res.append(0)
+        res[-1] += 1
+    return res
 
 
 def calc_results(
@@ -91,8 +108,8 @@ def calc_results(
 ):
     db = make_session()
     with open(fname_in, "r") as fin_csv:
-        next(fin_csv)
         fin = csv.reader(fin_csv)
+        header = next(fin)
         for row in fin:
             parse_result(
                 row,

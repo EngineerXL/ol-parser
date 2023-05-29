@@ -9,6 +9,14 @@ def save_from_url(url=None, fname=None):
             fout.write(r.text)
 
 
+def count_solved(ar):
+    res = 0
+    for elem in ar:
+        if "+" in elem:
+            res += 1
+    return res
+
+
 def get_value(s):
     t = s.strip()
     return None if t == "-" else t

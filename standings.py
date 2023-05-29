@@ -9,11 +9,24 @@ def get_html_standings(url):
     return r.text
 
 
+# Таблица объединяет все контесты, поэтому надо шаманить с именами столбцов
 def cf_to_csv(url, fname_out="./data/standings_teams.csv"):
     soup = BeautifulSoup(get_html_standings(url), "lxml")
     table = soup.find("table", class_="standings")
     df = pd.read_html(str(table))[0]
     df = df.drop(["#", "=", "Penalty"], axis="columns")
+    for i in range(26):
+        c = chr(ord("A") + i)
+        df = df.rename(columns={c: c + ".0"})
+    cols = list(df.columns)
+    contest_cnt = 0
+    raname_dct = dict()
+    for el in cols[1:]:
+        c = el[0]
+        if c == "A":
+            contest_cnt += 1
+        raname_dct[el] = c + "." + str(contest_cnt)
+    df.rename(columns=raname_dct, inplace=True)
     df[:-1].to_csv(fname_out, index=False)
 
 
@@ -30,3 +43,11 @@ def ya_to_csv(url, fname_out="./data/standings_teams.csv"):
             return
         df = pd.concat([df, pd.read_html(str(table))[0]])
         i += 1
+
+
+def ti_to_csv(url, fname_out="./data/standings_teams.csv"):
+    soup = BeautifulSoup(get_html_standings(url), "lxml")
+    table = soup.find("table", class_="monitor")
+    df = pd.read_html(str(table))[0]
+    df = df.drop(["Rank", "Solved", "Time"], axis="columns")
+    df[:-2].to_csv(fname_out, index=False)
