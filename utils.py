@@ -22,6 +22,16 @@ def get_value(s):
     return None if t == "-" else t
 
 
+# В названии команды могут быть скобки, а фамилии всегда с конца
+def get_surnames_ar(s):
+    t = s.strip()[::-1]
+    beg, end = t.find(")"), t.find("(")
+    if beg == -1:
+        raise BaseException(('Could not resolve team name: "%s"' % s))
+    ar = t[beg + 1 : end][::-1].replace(",", "")
+    return sorted(ar.split())
+
+
 OFFSET = 1
 MEMBER_SZ = 7
 

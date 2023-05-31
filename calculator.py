@@ -6,15 +6,6 @@ from db import *
 from sqlalchemy import select
 
 
-def get_surnames_ar(s):
-    s = s.strip()
-    pos = s.find("(")
-    if pos == -1:
-        raise BaseException(('Could not resolve team name: "%s"' % s))
-    ar = s[pos + 1 : -1].replace(",", "")
-    return sorted(ar.split())
-
-
 def add_results(contestant_scores, id, key, solved):
     if id not in contestant_scores.keys():
         contestant_scores[id] = dict()
@@ -36,7 +27,7 @@ def make_key(s, key_base=None):
 def upd_team_results(s, db, contestant_scores, key_base, cnt):
     key = make_key(s, key_base)
     try:
-        surnames_ar = get_surnames_ar(s)
+        surnames_ar = utils.get_surnames_ar(s)
     except BaseException as ex:
         raise ex
     surnames = ", ".join(surnames_ar)
