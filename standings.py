@@ -20,12 +20,16 @@ def cf_to_csv(url, fname_out="./data/standings_teams.csv"):
         df = df.rename(columns={c: c + ".0"})
     cols = list(df.columns)
     contest_cnt = 0
-    raname_dct = dict()
+    raname_dct, contest = dict(), dict()
+    prev_c = "Z"
     for el in cols[1:]:
         c = el[0]
-        if c == "A":
+        if c < prev_c:
+            contest = {chr(ord("A") + i): 0 for i in range(26)}
             contest_cnt += 1
-        raname_dct[el] = c + "." + str(contest_cnt)
+        prev_c = c
+        contest[c] += 1
+        raname_dct[el] = c + str(contest[c]) + "." + str(contest_cnt)
     df.rename(columns=raname_dct, inplace=True)
     df[:-1].to_csv(fname_out, index=False)
 

@@ -9,11 +9,16 @@ def save_from_url(url=None, fname=None):
             fout.write(r.text)
 
 
-def count_solved(ar):
-    res = 0
-    for elem in ar:
+def get_solved(header, row, mode="solving"):
+    res = set()
+    for i, elem in enumerate(row):
         if "+" in elem:
-            res += 1
+            if mode == "solving":
+                res.add(header[i])
+            elif mode == "visiting":
+                res.add(header[i].split(".")[1])
+            else:
+                raise BaseException("Unknown mode in get_solved function!")
     return res
 
 

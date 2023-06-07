@@ -6,26 +6,34 @@ from db import *
 from sqlalchemy import select
 
 
-def add_results(contestant_scores, id, key, solved):
-    if id not in contestant_scores.keys():
-        contestant_scores[id] = dict()
-    if key not in contestant_scores[id]:
-        contestant_scores[id][key] = 0
-    contestant_scores[id][key] += solved
-
-
-def make_key(s, key_base=None):
+def make_key(upsolving, key_base=None):
     if key_base:
         if key_base == "olymp":
-            return "upsolved" if "*" in s else "olymp"
+            return "upsolved" if upsolving else "olymp"
         else:
             return key_base
     else:
-        return "upsolved" if "*" in s else "solved"
+        return "upsolved" if upsolving else "solved"
 
 
-def upd_team_results(s, db, contestant_scores, key_base, cnt):
-    key = make_key(s, key_base)
+def add_results(contestant_scores, id, upsolving, key_base, solved):
+    key = make_key(upsolving, key_base)
+    key_solved_set = key_base + "-set" if key_base else "solved-set"
+    if not key_base:
+        key_base = "contests"
+    if id not in contestant_scores.keys():
+        contestant_scores[id] = dict()
+    if key_solved_set not in contestant_scores[id]:
+        contestant_scores[id][key_solved_set] = set()
+    if key not in contestant_scores[id]:
+        contestant_scores[id][key] = 0
+    for elem in solved:
+        if elem not in contestant_scores[id][key_solved_set]:
+            contestant_scores[id][key_solved_set].add(elem)
+            contestant_scores[id][key] += 1
+
+
+def upd_team_results(s, db, contestant_scores, upsolving, key_base, solved):
     try:
         surnames_ar = utils.get_surnames_ar(s)
     except BaseException as ex:
@@ -42,16 +50,15 @@ def upd_team_results(s, db, contestant_scores, key_base, cnt):
             continue
         db_member = db.get(Member, id)
         if groups_regex.check(db_member.group, "1b"):
-            key = "opencup"
-        add_results(contestant_scores, id, key, cnt)
+            key_base = "opencup"
+        add_results(contestant_scores, id, upsolving, key_base, solved)
 
 
 def get_nickname(s):
     return s.replace("* ", "").strip()
 
 
-def upd_junior_results(s, db, contestant_scores, key_base, cnt):
-    key = make_key(s, key_base)
+def upd_junior_results(s, db, contestant_scores, upsolving, key_base, solved):
     stmt = select(Member).where(
         Member.nickname == get_nickname(s),
     )
@@ -59,10 +66,11 @@ def upd_junior_results(s, db, contestant_scores, key_base, cnt):
     if db_member is None:
         raise BaseException(('Failed to process junior: "%s"' % s))
     db_member = db_member[0]
-    add_results(contestant_scores, db_member.id, key, cnt)
+    add_results(contestant_scores, db_member.id, upsolving, key_base, solved)
 
 
 def parse_result(
+    header,
     row,
     db,
     contestant_scores,
@@ -70,24 +78,19 @@ def parse_result(
     key_base=None,
     verbose=False,
 ):
-    cnt = utils.count_solved(row[1:])
+    get_mode = "visiting" if key_base == "visited" else "solving"
+    solved = utils.get_solved(header[1:], row[1:], mode=get_mode)
+    upsolving = True if "*" in row[0] else False
     try:
         if mode == "teams":
-            upd_team_results(row[0], db, contestant_scores, key_base, cnt)
+            upd_team_results(row[0], db, contestant_scores, upsolving, key_base, solved)
         elif mode == "junior":
-            upd_junior_results(row[0], db, contestant_scores, key_base, cnt)
+            upd_junior_results(
+                row[0], db, contestant_scores, upsolving, key_base, solved
+            )
     except BaseException as ex:
         if verbose:
             print(ex)
-
-
-def get_tasks(header):
-    res = []
-    for el in header[1:]:
-        if "A" in el:
-            res.append(0)
-        res[-1] += 1
-    return res
 
 
 def calc_results(
@@ -103,6 +106,7 @@ def calc_results(
         header = next(fin)
         for row in fin:
             parse_result(
+                header,
                 row,
                 db,
                 contestant_scores,
