@@ -1,7 +1,9 @@
-from sqlalchemy import create_engine, select, Column, BigInteger, Boolean, Text
+from sqlalchemy import create_engine, delete, select, Column, BigInteger, Boolean, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import EmailType
+
+import groups_regex
 
 engine = create_engine("postgresql+psycopg2://pguser:pguser@localhost:25500/pgol")
 
@@ -30,6 +32,26 @@ class Member(Base):
     login = Column(Text)
     password = Column(Text)
     mail_sent = Column(Boolean, default=False)
+
+
+def print_members(course="1b"):
+    pg = make_session()
+    for member in pg.execute('SELECT * FROM "Members"'):
+        if groups_regex.check(member.group, course):
+            print(member)
+
+
+def rm_member(n, verbose=True):
+    pg = make_session()
+    db_member = pg.get(Member, n)
+    if db_member is None:
+        print("No member with id", n)
+        return
+    if verbose:
+        print("REMOVING", db_member)
+    stmt = delete(Member).where(Member.id == n)
+    pg.execute(stmt)
+    pg.commit()
 
 
 def make_stmt(member):

@@ -1,5 +1,6 @@
 import calculator
 import codeforces
+import db
 import mailing
 import registration
 import standings
@@ -18,6 +19,7 @@ if __name__ == "__main__":
     )
     mailing.send_cf(mode="junior")
     codeforces.print_cf(DATA_FOLDER + "cf.txt", mode="junior")
+    # db.print_members(course="1b")
 
     # standings.cf_to_csv(
     #     url=URL_STANDINGS_JUNIOR,
