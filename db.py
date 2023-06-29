@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, select, Column, BigInteger, Text
+from sqlalchemy import create_engine, select, Column, BigInteger, Boolean, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import EmailType
 
 engine = create_engine("postgresql+psycopg2://pguser:pguser@localhost:25500/pgol")
 
@@ -25,6 +26,10 @@ class Member(Base):
     surname = Column(Text)
     group = Column(Text)
     nickname = Column(Text)
+    email = Column(EmailType)
+    login = Column(Text)
+    password = Column(Text)
+    mail_sent = Column(Boolean, default=False)
 
 
 def make_stmt(member):
@@ -33,6 +38,7 @@ def make_stmt(member):
         Member.firstname == member["firstname"],
         Member.middlename == member["middlename"],
         Member.group == member["group"],
+        Member.email == member["email"],
     )
 
 
@@ -52,7 +58,10 @@ def make_db_member(member):
         firstname=member["firstname"],
         middlename=member["middlename"],
         group=member["group"],
+        email=member["email"],
         nickname=make_nickname(member),
+        login=member["login"],
+        password=member["password"],
     )
 
 

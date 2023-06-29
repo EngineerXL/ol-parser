@@ -1,4 +1,21 @@
 import requests
+import secrets
+import string
+
+from my_mail import *
+
+ALPHABET = string.ascii_letters + string.digits
+BASE_HANDLE = "mai"
+PASS_LEN = 12
+
+
+def gen_password(n):
+    return "".join(secrets.choice(ALPHABET) for _ in range(n))
+
+
+def gen_handle(n):
+    s = str(n)
+    return BASE_HANDLE + "0" * (4 - len(s)) + s
 
 
 def save_from_url(url=None, fname=None):
@@ -48,4 +65,5 @@ def get_members(row, n=3):
         res[i]["firstname"] = get_value(row[OFFSET + MEMBER_SZ * i + 1])
         res[i]["middlename"] = get_value(row[OFFSET + MEMBER_SZ * i + 2])
         res[i]["group"] = get_value(row[OFFSET + MEMBER_SZ * i + 3])
+        res[i]["email"] = get_value(row[OFFSET + MEMBER_SZ * i + 4])
     return res

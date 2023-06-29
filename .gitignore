@@ -1,6 +1,7 @@
 ### Local files
 *.csv
 *.html
+cf.txt
 
 ### Python
 # Byte-compiled / optimized / DLL files

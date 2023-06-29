@@ -28,6 +28,9 @@ def parse_team_row(row, db):
 
 def parse_junior_row(row, db):
     member = utils.get_members(row, n=1)[0]
+    last_id = db.query(Member).count()
+    member["login"] = utils.gen_handle(last_id + 1)
+    member["password"] = utils.gen_password(utils.PASS_LEN)
     stmt = make_stmt(member)
     if db.execute(stmt).first() is None:
         db.add(make_db_member(member))
