@@ -5,7 +5,6 @@ import string
 from my_mail import *
 
 ALPHABET = string.ascii_letters + string.digits
-BASE_HANDLE = "mai"
 PASS_LEN = 12
 
 
@@ -13,9 +12,9 @@ def gen_password(n):
     return "".join(secrets.choice(ALPHABET) for _ in range(n))
 
 
-def gen_handle(n):
+def gen_handle(n, base="mai"):
     s = str(n)
-    return BASE_HANDLE + "0" * (4 - len(s)) + s
+    return base + "0" * (4 - len(s)) + s
 
 
 def save_from_url(url=None, fname=None):
