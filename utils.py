@@ -55,9 +55,11 @@ def get_surnames_ar(s):
 
 OFFSET = 1
 MEMBER_SZ = 7
+N_IN_TEAM = 3
+TEAM_ID_IND = OFFSET + MEMBER_SZ * N_IN_TEAM
 
 
-def get_members(row, n=3):
+def get_members(row, n=N_IN_TEAM):
     res = [dict() for _ in range(n)]
     for i in range(n):
         res[i]["surname"] = get_value(row[OFFSET + MEMBER_SZ * i + 0])

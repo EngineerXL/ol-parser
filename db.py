@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import EmailType
 
+import csv
 import groups_regex
 
 engine = create_engine("postgresql+psycopg2://pguser:pguser@localhost:25500/pgol")
@@ -34,11 +35,24 @@ class Member(Base):
     mail_sent = Column(Boolean, default=False)
 
 
-def print_members(course="1b"):
+def dump_members(fname_out="result.csv", course="1b"):
     pg = make_session()
-    for member in pg.execute('SELECT * FROM "Members"'):
-        if groups_regex.check(member.group, course):
-            print(member)
+    with open(fname_out, "w") as fout_csv:
+        fout = csv.writer(fout_csv)
+        header = ["N", "Фамилия", "Имя", "Отчество", "Группа"]
+        fout.writerow(header)
+        cnt = 1
+        for member in pg.execute('SELECT * FROM "Members"'):
+            if course is None or groups_regex.check(member.group, course):
+                row = [
+                    cnt,
+                    member.surname,
+                    member.firstname,
+                    member.middlename,
+                    member.group,
+                ]
+                cnt += 1
+                fout.writerow(row)
 
 
 def rm_member(n, verbose=True):
@@ -82,8 +96,8 @@ def make_db_member(member):
         group=member["group"],
         email=member["email"],
         nickname=make_nickname(member),
-        login=member["login"],
-        password=member["password"],
+        login=member["login"] if "login" in member else None,
+        password=member["password"] if "password" in member else None,
     )
 
 
@@ -94,6 +108,15 @@ class Team(Base):
     id2 = Column(BigInteger)
     id3 = Column(BigInteger)
     surnames = Column(Text)
+    teamname = Column(Text)
+    login = Column(Text)
+    password = Column(Text)
+    mail_sent = Column(Boolean, default=False)
+
+
+def make_teamname(teamid, surnames):
+    res = "МАИ #" + str(teamid) + " (" + surnames + ")"
+    return res
 
 
 Base.metadata.create_all(bind=engine)

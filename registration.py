@@ -5,14 +5,17 @@ from db import *
 
 
 def parse_team_row(row, db):
-    members = utils.get_members(row, n=3)
+    members = utils.get_members(row, n=utils.N_IN_TEAM)
+    teamid = row[utils.TEAM_ID_IND]
     ids, surnames_ar = [], []
     for member in members:
         if member["surname"] is None:
             continue
         stmt = make_stmt(member)
         if db.execute(stmt).first() is None:
-            db.add(make_db_member(member))
+            db_member = make_db_member(member)
+            db_member.send_mail = True
+            db.add(db_member)
             db.commit()
         res = db.execute(stmt).first()[0]
         surnames_ar.append(res.surname)
@@ -21,7 +24,15 @@ def parse_team_row(row, db):
     surnames = ", ".join(sorted(surnames_ar))
     stmt = select(Team).where(Team.surnames == surnames)
     if db.execute(stmt).first() is None:
-        db_team = Team(id1=ids[0], id2=ids[1], id3=ids[2], surnames=surnames)
+        db_team = Team(
+            id1=ids[0],
+            id2=ids[1],
+            id3=ids[2],
+            surnames=surnames,
+            teamname=make_teamname(teamid, surnames),
+            login=utils.gen_handle(teamid, base="maiop"),
+            password=utils.gen_password(utils.PASS_LEN),
+        )
         db.add(db_team)
         db.commit()
 
