@@ -6,3 +6,6 @@ clean:
 
 clean-data:
 	rm -rf ./data/*
+
+install:
+	bash install.sh

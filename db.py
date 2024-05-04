@@ -1,4 +1,13 @@
-from sqlalchemy import create_engine, delete, select, Column, BigInteger, Boolean, Text
+from sqlalchemy import (
+    create_engine,
+    delete,
+    select,
+    text,
+    Column,
+    BigInteger,
+    Boolean,
+    Text,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import EmailType
@@ -39,10 +48,10 @@ def dump_members(fname_out="result.csv", course="1b"):
     pg = make_session()
     with open(fname_out, "w") as fout_csv:
         fout = csv.writer(fout_csv)
-        header = ["N", "Фамилия", "Имя", "Отчество", "Группа"]
+        header = ["N", "Фамилия", "Имя", "Отчество", "Группа", "ID"]
         fout.writerow(header)
         cnt = 1
-        for member in pg.execute('SELECT * FROM "Members"'):
+        for member in pg.execute(text('SELECT * FROM "Members"')):
             if course is None or groups_regex.check(member.group, course):
                 row = [
                     cnt,
@@ -50,6 +59,7 @@ def dump_members(fname_out="result.csv", course="1b"):
                     member.firstname,
                     member.middlename,
                     member.group,
+                    member.id,
                 ]
                 cnt += 1
                 fout.writerow(row)

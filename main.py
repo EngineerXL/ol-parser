@@ -29,6 +29,8 @@ if __name__ == "__main__":
     codeforces.print_cf(DATA_FOLDER + "cf_teams.txt", mode="teams")
     codeforces.print_cf(DATA_FOLDER + "cf_juniors.txt", mode="junior")
 
+    contestants = dict()
+    # Summer practice
     # standings.cf_to_csv(
     #     url=URL_SUMMER_STANDINGS,
     #     fname_out=DATA_FOLDER + "standings_summer.csv",
@@ -37,7 +39,6 @@ if __name__ == "__main__":
     #     url=URL_SUMMER_BASE,
     #     fname_out=DATA_FOLDER + "standings_base.csv",
     # )
-    # contestants = dict()
     # calculator.calc_results(
     #     contestants,
     #     mode="junior",
@@ -58,9 +59,90 @@ if __name__ == "__main__":
     #     key_base="base",
     #     verbose=True,
     # )
-    # calculator.save_results(
-    #     contestants,
-    #     course="1b",
-    #     key_scores={"base": 2, "solved": 3, "upsolved": 1, "visited": 1},
-    #     fname_out=DATA_FOLDER + "results_1b.csv",
+
+    # Juniors
+    standings.cf_to_csv(
+        url=URL_JUNIORS_BASE,
+        fname_out=DATA_FOLDER + "standings_juniors_base.csv",
+    )
+    standings.cf_to_csv(
+        url=URL_JUNIORS_STANDINGS,
+        fname_out=DATA_FOLDER + "standings_juniors.csv",
+    )
+    # standings.cf_to_csv(
+    #     url=URL_OLYMP,
+    #     fname_out=DATA_FOLDER + "standings_olymp.csv",
     # )
+    calculator.calc_results(
+        contestants,
+        mode="junior",
+        fname_in=DATA_FOLDER + "standings_juniors.csv",
+        verbose=True,
+    )
+    calculator.calc_results(
+        contestants,
+        mode="junior",
+        fname_in=DATA_FOLDER + "standings_juniors_base.csv",
+        key_base="base",
+        verbose=True,
+    )
+    # calculator.calc_results(
+    #     contestants,
+    #     mode="junior",
+    #     fname_in=DATA_FOLDER + "standings_olymp.csv",
+    #     key_base="olymp",
+    #     verbose=True,
+    # )
+    calculator.calc_results(
+        contestants,
+        mode="junior",
+        fname_in=DATA_FOLDER + "jun_cheaters.csv",
+        key_base="cheat",
+        verbose=True,
+    )
+
+    # Fall teams
+    standings.cf_to_csv(
+        url=URL_TEAMS_STANDINGS,
+        fname_out=DATA_FOLDER + "standings_teams.csv",
+    )
+    calculator.calc_results(
+        contestants,
+        mode="teams",
+        fname_in=DATA_FOLDER + "standings_teams.csv",
+        verbose=True,
+    )
+    calculator.calc_results(
+        contestants,
+        mode="teams",
+        fname_in=DATA_FOLDER + "standings_teams.csv",
+        key_base="visited",
+        verbose=True,
+    )
+
+    calculator.save_results(
+        contestants,
+        course="1b",
+        key_scores={
+            "base": 2,
+            "solved": 3,
+            "upsolved": 1,
+            "olymp": 6,
+            "opencup-solved": 1,
+            "opencup-upsolved": 1,
+            "cheat": -806,
+        },
+        fname_out=DATA_FOLDER + "results_1b.csv",
+    )
+    calculator.save_results(
+        contestants,
+        course="3b",
+        key_scores={"solved": 3, "upsolved": 1, "visited": 1},
+        fname_out=DATA_FOLDER + "results_3b.csv",
+    )
+    calculator.save_results(
+        contestants,
+        course="4b",
+        key_scores={"solved": 3, "upsolved": 1, "visited": 1},
+        fname_out=DATA_FOLDER + "results_4b.csv",
+    )

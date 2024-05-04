@@ -36,14 +36,14 @@ def send_mail(smtp_server, member, verbose=True):
 
 def send_cf_teams(smtp_server, verbose=True):
     pg = make_session()
-    cursor = pg.execute('SELECT * FROM "Teams"').all()
+    cursor = pg.execute(text('SELECT * FROM "Teams"')).all()
     for team in cursor:
         print(team.teamname)
 
 
 def send_cf_junior(smtp_server, verbose=True):
     pg = make_session()
-    cursor = pg.execute('SELECT * FROM "Members"').all()
+    cursor = pg.execute(text('SELECT * FROM "Members"')).all()
     for member in cursor:
         if member.mail_sent or member.login is None:
             continue

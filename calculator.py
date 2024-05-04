@@ -16,11 +16,12 @@ def make_key(upsolving, key_base=None):
         return "upsolved" if upsolving else "solved"
 
 
-def add_results(contestant_scores, id, upsolving, key_base, solved):
+def add_results(contestant_scores, id, upsolving, key_base, solved, flag1b=False):
     key = make_key(upsolving, key_base)
     key_solved_set = key_base + "-set" if key_base else "solved-set"
-    if not key_base:
-        key_base = "contests"
+    if flag1b:
+        key = "opencup-" + key
+        key_solved_set = "opencup-" + key_solved_set
     if id not in contestant_scores.keys():
         contestant_scores[id] = dict()
     if key_solved_set not in contestant_scores[id]:
@@ -49,9 +50,14 @@ def upd_team_results(s, db, contestant_scores, upsolving, key_base, solved):
         if id == 0:
             continue
         db_member = db.get(Member, id)
-        if groups_regex.check(db_member.group, "1b"):
-            key_base = "opencup"
-        add_results(contestant_scores, id, upsolving, key_base, solved)
+        add_results(
+            contestant_scores,
+            id,
+            upsolving,
+            key_base,
+            solved,
+            groups_regex.check(db_member.group, "1b"),
+        )
 
 
 def get_nickname(s):
