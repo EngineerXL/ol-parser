@@ -18,7 +18,7 @@ def make_key(upsolving, key_base=None):
 
 def add_results(contestant_scores, id, upsolving, key_base, solved, flag1b=False):
     key = make_key(upsolving, key_base)
-    key_solved_set = key_base + "-set" if key_base else "solved-set"
+    key_solved_set = (key_base + "-set") if key_base else "solved-set"
     if flag1b:
         key = "opencup-" + key
         key_solved_set = "opencup-" + key_solved_set
@@ -28,9 +28,9 @@ def add_results(contestant_scores, id, upsolving, key_base, solved, flag1b=False
         contestant_scores[id][key_solved_set] = set()
     if key not in contestant_scores[id]:
         contestant_scores[id][key] = 0
-    for elem in solved:
-        if elem not in contestant_scores[id][key_solved_set]:
-            contestant_scores[id][key_solved_set].add(elem)
+    for task in solved:
+        if task not in contestant_scores[id][key_solved_set]:
+            contestant_scores[id][key_solved_set].add(task)
             contestant_scores[id][key] += 1
 
 
@@ -72,6 +72,10 @@ def upd_junior_results(s, db, contestant_scores, upsolving, key_base, solved):
     if db_member is None:
         raise BaseException(('Failed to process junior: "%s"' % s))
     db_member = db_member[0]
+    # program does not differ 1 course and team solved tasks
+    # so it gives strange results
+    if not groups_regex.check(db_member.group, "1b"):
+        raise BaseException(('Skipping "%s" - not a junior' % s))
     add_results(contestant_scores, db_member.id, upsolving, key_base, solved)
 
 

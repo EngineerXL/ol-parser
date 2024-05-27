@@ -60,66 +60,74 @@ if __name__ == "__main__":
     #     verbose=True,
     # )
 
-    # Juniors
+    # Juniors Spring
     standings.cf_to_csv(
-        url=URL_JUNIORS_BASE,
-        fname_out=DATA_FOLDER + "standings_juniors_base.csv",
+        url=URL_JUNIORS_BASE_SPRING,
+        fname_out=DATA_FOLDER + "standings_juniors_base_spring.csv",
     )
     standings.cf_to_csv(
-        url=URL_JUNIORS_STANDINGS,
-        fname_out=DATA_FOLDER + "standings_juniors.csv",
+        url=URL_JUNIORS_STANDINGS_SPRING,
+        fname_out=DATA_FOLDER + "standings_juniors_spring.csv",
     )
-    # standings.cf_to_csv(
-    #     url=URL_OLYMP,
-    #     fname_out=DATA_FOLDER + "standings_olymp.csv",
-    # )
+    standings.cf_to_csv(
+        url=URL_OLYMP_SPRING,
+        fname_out=DATA_FOLDER + "standings_olymp_spring.csv",
+    )
     calculator.calc_results(
         contestants,
         mode="junior",
-        fname_in=DATA_FOLDER + "standings_juniors.csv",
+        fname_in=DATA_FOLDER + "standings_juniors_spring.csv",
         verbose=True,
     )
     calculator.calc_results(
         contestants,
         mode="junior",
-        fname_in=DATA_FOLDER + "standings_juniors_base.csv",
+        fname_in=DATA_FOLDER + "standings_juniors_base_spring.csv",
         key_base="base",
         verbose=True,
     )
-    # calculator.calc_results(
-    #     contestants,
-    #     mode="junior",
-    #     fname_in=DATA_FOLDER + "standings_olymp.csv",
-    #     key_base="olymp",
-    #     verbose=True,
-    # )
     calculator.calc_results(
         contestants,
         mode="junior",
-        fname_in=DATA_FOLDER + "jun_cheaters.csv",
+        fname_in=DATA_FOLDER + "standings_olymp_spring.csv",
+        key_base="olymp",
+        verbose=True,
+    )
+    calculator.calc_results(
+        contestants,
+        mode="junior",
+        fname_in=DATA_FOLDER + "jun_cheaters_spring.csv",
         key_base="cheat",
         verbose=True,
     )
 
-    # Fall teams
+    # Spring teams
     standings.cf_to_csv(
-        url=URL_TEAMS_STANDINGS,
-        fname_out=DATA_FOLDER + "standings_teams.csv",
+        url=URL_TEAMS_STANDINGS_SPRING,
+        fname_out=DATA_FOLDER + "standings_teams_spring.csv",
     )
     calculator.calc_results(
         contestants,
         mode="teams",
-        fname_in=DATA_FOLDER + "standings_teams.csv",
+        fname_in=DATA_FOLDER + "standings_teams_spring.csv",
         verbose=True,
     )
     calculator.calc_results(
         contestants,
         mode="teams",
-        fname_in=DATA_FOLDER + "standings_teams.csv",
+        fname_in=DATA_FOLDER + "standings_teams_spring.csv",
         key_base="visited",
         verbose=True,
     )
+    calculator.calc_results(
+        contestants,
+        mode="teams",
+        fname_in=DATA_FOLDER + "standings_olymp_spring.csv",
+        key_base="olymp",
+        verbose=True,
+    )
 
+    # 1b
     calculator.save_results(
         contestants,
         course="1b",
@@ -134,12 +142,19 @@ if __name__ == "__main__":
         },
         fname_out=DATA_FOLDER + "results_1b.csv",
     )
+    # 3b
     calculator.save_results(
         contestants,
         course="3b",
-        key_scores={"solved": 3, "upsolved": 1, "visited": 1},
+        key_scores={
+            "solved": 3,
+            "upsolved": 1,
+            "visited": 1,
+            "olymp": 6,
+        },
         fname_out=DATA_FOLDER + "results_3b.csv",
     )
+    # 4b
     calculator.save_results(
         contestants,
         course="4b",
