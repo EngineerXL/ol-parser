@@ -6,7 +6,7 @@ echo "Initializing PostgreSQL..."
 sleep 5
 
 echo "Running script..."
-python3 main.py
+python3 main.py $1
 
 echo "Shutting down docker container..."
 docker-compose down
