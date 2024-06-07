@@ -6,17 +6,20 @@ import registration
 import standings
 import utils
 
-from urls import *
+from cfg_parser import config
+
 
 DATA_FOLDER = "./data/"
-DOWNLOAD = False
+DOWNLOAD = True
 EXT = ".csv"
 
 
 def handle_reg():
     if DOWNLOAD:
-        utils.save_from_url(URL_REG_JUNIOR, DATA_FOLDER + "registration_junior.csv")
-        utils.save_from_url(URL_REG_TEAMS, DATA_FOLDER + "registration_teams.csv")
+        utils.save_from_url(
+            config["url_reg_junior"], DATA_FOLDER + "registration_junior.csv"
+        )
+        utils.save_from_url(config["url_reg_teams"] + "registration_teams.csv")
     registration.register_pg(
         fname_in=DATA_FOLDER + "registration_junior.csv", mode="junior"
     )
@@ -76,8 +79,8 @@ def handle_summer():
     if DOWNLOAD:
         download_tables(
             {
-                URL_SUMMER_BASE: ("cf", "standings_summer_base.csv"),
-                URL_SUMMER_STANDINGS: ("cf", "standings_summer.csv"),
+                config["url_summer_base"]: ("cf", "standings_summer_base.csv"),
+                config["url_summer_standings"]: ("cf", "standings_summer.csv"),
             },
         )
     contestants = dict()
@@ -112,13 +115,22 @@ def handle_term(term):
     if DOWNLOAD:
         download_tables(
             {
-                URL_JUNIORS_BASE_SPRING: (
+                config["url_juniors_base_" + term]: (
                     "cf",
                     "standings_juniors_base_" + term + EXT,
                 ),
-                URL_JUNIORS_SPRING: ("cf", "standings_juniors_" + term + EXT),
-                URL_OLYMP_SPRING: ("cf", "standings_olymp_" + term + EXT),
-                URL_TEAMS_STANDINGS_SPRING: ("cf", "standings_teams_" + term + EXT),
+                config["url_juniors_standings_" + term]: (
+                    "cf",
+                    "standings_juniors_" + term + EXT,
+                ),
+                config["url_olymp_" + term]: (
+                    "cf",
+                    "standings_olymp_" + term + EXT,
+                ),
+                config["url_teams_standings_" + term]: (
+                    "cf",
+                    "standings_teams_" + term + EXT,
+                ),
             }
         )
     contestants = dict()
@@ -182,15 +194,15 @@ def handle_practice():
     if DOWNLOAD:
         download_tables(
             {
-                URL_JUNIORS_STANDINGS_YEAR: (
+                config["url_juniors_standings_year"]: (
                     "cf",
                     "standings_juniors_year.csv",
                 ),
-                URL_JUNIORS_BASE_YEAR: (
+                config["url_juniors_base_year"]: (
                     "cf",
                     "standings_juniors_base_year.csv",
                 ),
-                URL_TEAMS_STANDINGS_YEAR: (
+                config["url_teams_standings_year"]: (
                     "cf",
                     "standings_teams_year.csv",
                 ),

@@ -2,8 +2,6 @@ import requests
 import secrets
 import string
 
-from my_mail import *
-
 ALPHABET = string.ascii_letters + string.digits
 PASS_LEN = 12
 

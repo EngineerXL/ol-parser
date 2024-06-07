@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from io import StringIO
 import pandas as pd
 import requests
 
@@ -13,7 +14,7 @@ def get_html_standings(url):
 def cf_to_csv(url, fname_out="./data/standings_teams.csv"):
     soup = BeautifulSoup(get_html_standings(url), "lxml")
     table = soup.find("table", class_="standings")
-    df = pd.read_html(str(table))[0]
+    df = pd.read_html(StringIO(str(table)))[0]
     df = df.drop(["#", "=", "Penalty"], axis="columns")
     for i in range(26):
         c = chr(ord("A") + i)
@@ -45,13 +46,13 @@ def ya_to_csv(url, fname_out="./data/standings_teams.csv"):
             df = df.drop(["№", "Очки", "Штраф"], axis="columns")
             df.to_csv(fname_out, index=False)
             return
-        df = pd.concat([df, pd.read_html(str(table))[0]])
+        df = pd.concat([df, pd.read_html(StringIO(str(table)))[0]])
         i += 1
 
 
 def ti_to_csv(url, fname_out="./data/standings_teams.csv"):
     soup = BeautifulSoup(get_html_standings(url), "lxml")
     table = soup.find("table", class_="monitor")
-    df = pd.read_html(str(table))[0]
+    df = pd.read_html(StringIO(str(table)))[0]
     df = df.drop(["Rank", "Solved", "Time"], axis="columns")
     df[:-2].to_csv(fname_out, index=False)

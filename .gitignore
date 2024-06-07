@@ -2,6 +2,7 @@
 *.csv
 *.html
 *.txt
+config.json
 
 ### Python
 # Byte-compiled / optimized / DLL files
