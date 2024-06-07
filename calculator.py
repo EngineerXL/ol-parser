@@ -106,7 +106,7 @@ def parse_result(
 def calc_results(
     contestant_scores,
     mode="teams",
-    key_base="",
+    key_base=None,
     fname_in="standings.csv",
     verbose=False,
 ):
