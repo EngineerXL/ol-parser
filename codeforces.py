@@ -8,7 +8,7 @@ def print_cf_teams(f):
         f.write(s + "\n")
 
 
-def print_cf_junior(f):
+def print_cf_juniors(f, mode="juniors"):
     pg = make_session()
     for member in pg.execute(text('SELECT * FROM "Members"')):
         if member.login is None:
@@ -21,5 +21,7 @@ def print_cf(fname_out="registration.csv", mode="teams"):
     with open(fname_out, "w") as f:
         if mode == "teams":
             print_cf_teams(f)
-        elif mode == "junior":
-            print_cf_junior(f)
+        elif mode == "juniors" or mode == "summer":
+            print_cf_juniors(f, mode)
+        else:
+            raise RuntimeError("Unknown key: " + mode)

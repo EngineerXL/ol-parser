@@ -37,11 +37,11 @@ def parse_team_row(row, db):
         db.commit()
 
 
-def parse_junior_row(row, db):
+def parse_junior_row(row, db, login_base):
     member = utils.get_members(row, n=1)[0]
     last_db_member = db.query(Member).order_by(Member.id.desc()).first()
     last_id = 1 if last_db_member is None else last_db_member.id + 1
-    member["login"] = utils.gen_handle(last_id, base="mai")
+    member["login"] = utils.gen_handle(last_id, base=login_base)
     member["password"] = utils.gen_password(utils.PASS_LEN)
     stmt = make_stmt(member)
     if db.execute(stmt).first() is None:
@@ -52,8 +52,8 @@ def parse_junior_row(row, db):
 def parse_table_row(row, db, mode="teams"):
     if mode == "teams":
         parse_team_row(row, db)
-    elif mode == "junior":
-        parse_junior_row(row, db)
+    elif mode == "juniors" or mode == "summer":
+        parse_junior_row(row, db, mode)
 
 
 def register_pg(fname_in="registration.csv", mode="teams"):

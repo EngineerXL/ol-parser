@@ -48,7 +48,16 @@ def dump_members(fname_out="result.csv", course="1b"):
     pg = make_session()
     with open(fname_out, "w") as fout_csv:
         fout = csv.writer(fout_csv)
-        header = ["N", "Фамилия", "Имя", "Отчество", "Группа", "ID"]
+        header = [
+            "N",
+            "Фамилия",
+            "Имя",
+            "Отчество",
+            "Группа",
+            "ID",
+            "login",
+            "mail_sent",
+        ]
         fout.writerow(header)
         cnt = 1
         for member in pg.execute(text('SELECT * FROM "Members"')):
@@ -60,6 +69,8 @@ def dump_members(fname_out="result.csv", course="1b"):
                     member.middlename,
                     member.group,
                     member.id,
+                    member.login,
+                    member.mail_sent,
                 ]
                 cnt += 1
                 fout.writerow(row)

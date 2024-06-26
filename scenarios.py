@@ -5,27 +5,41 @@ import mailing
 import registration
 import standings
 import utils
+import db
 
 from cfg_parser import config
-
 
 DATA_FOLDER = "./data/"
 DOWNLOAD = True
 EXT = ".csv"
 
 
-def handle_reg():
-    if DOWNLOAD:
-        utils.save_from_url(
-            config["url_reg_junior"], DATA_FOLDER + "registration_junior.csv"
+def handle_reg(mode="year"):
+    if mode == "year":
+        if DOWNLOAD:
+            utils.save_from_url(
+                config["url_reg_juniors"], DATA_FOLDER + "registration_juniors.csv"
+            )
+            utils.save_from_url(
+                config["url_reg_teams"], DATA_FOLDER + "registration_teams.csv"
+            )
+        registration.register_pg(
+            fname_in=DATA_FOLDER + "registration_juniors.csv", mode="juniors"
         )
-        utils.save_from_url(config["url_reg_teams"] + "registration_teams.csv")
-    registration.register_pg(
-        fname_in=DATA_FOLDER + "registration_junior.csv", mode="junior"
-    )
-    registration.register_pg(
-        fname_in=DATA_FOLDER + "registration_teams.csv", mode="teams"
-    )
+        registration.register_pg(
+            fname_in=DATA_FOLDER + "registration_teams.csv", mode="teams"
+        )
+        codeforces.print_cf(DATA_FOLDER + "cf_teams.txt", mode="teams")
+        codeforces.print_cf(DATA_FOLDER + "cf_juniors.txt", mode="juniors")
+    elif mode == "summer":
+        if DOWNLOAD:
+            utils.save_from_url(
+                config["url_reg_summer"], DATA_FOLDER + "registration_summer.csv"
+            )
+        registration.register_pg(
+            fname_in=DATA_FOLDER + "registration_summer.csv", mode="summer"
+        )
+        codeforces.print_cf(DATA_FOLDER + "cf_summer.txt", mode="summer")
 
 
 def handle_dump():
@@ -34,10 +48,9 @@ def handle_dump():
 
 
 def handle_mailing():
-    # ПЕРЕД РАССЫЛКОЙ ПРОВЕРЬ ТЕКСТ ПИСЬМА
-    # mailing.send_cf(mode="junior")
-    codeforces.print_cf(DATA_FOLDER + "cf_teams.txt", mode="teams")
-    codeforces.print_cf(DATA_FOLDER + "cf_juniors.txt", mode="junior")
+    mailing.handle_mailing(mode="teams")
+    mailing.handle_mailing(mode="juniors")
+    mailing.handle_mailing(mode="summer")
 
 
 def download_tables(todo, verbose=True):
@@ -53,7 +66,7 @@ def download_tables(todo, verbose=True):
             print("Unknown table type:", val[0])
 
 
-def process_tables(contestants, todo, mode="junior", verbose=True):
+def process_tables(contestants, todo, mode="juniors", verbose=True):
     for key_base, fname in todo.items():
         calculator.calc_results(
             contestants,
@@ -91,7 +104,7 @@ def handle_summer():
             None: "standings_summer.csv",
             "visited": "standings_summer.csv",
         },
-        mode="junior",
+        mode="juniors",
         verbose=True,
     )
     save_results(
@@ -143,7 +156,7 @@ def handle_term(term):
             "olymp": "standings_olymp_" + term + EXT,
             "cheat": "jun_cheaters_" + term + EXT,
         },
-        mode="junior",
+        mode="juniors",
         verbose=True,
     )
     # Teams
@@ -217,7 +230,7 @@ def handle_practice():
             None: "standings_juniors_year.csv",
             "visited": "standings_juniors_year.csv",
         },
-        mode="junior",
+        mode="juniors",
         verbose=True,
     )
     # Teams
@@ -260,3 +273,16 @@ def handle_practice():
             ),
         },
     )
+
+
+def print_help():
+    print("ol-parser keys:")
+    print("reg_year: perform registration of teams and juniors")
+    print("reg_summer: perform registration of summer practice juniors")
+    print("mailing: perform mailing")
+    print("dump: dump students database into files")
+    print("res_spring: calculate team and juniors spring term results")
+    print("res_fall: calculate team and juniors fall term results")
+    print("practice_year: calculate team and juniors practice results")
+    print("practice_summer: calculate summer practice results")
+    print("help: print this help message")

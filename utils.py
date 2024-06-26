@@ -10,9 +10,9 @@ def gen_password(n):
     return "".join(secrets.choice(ALPHABET) for _ in range(n))
 
 
-def gen_handle(n, base="mai"):
+def gen_handle(n, base="juniors"):
     s = str(n)
-    return base + "0" * (4 - len(s)) + s
+    return ("mai" if base == "juniors" else base) + "0" * (4 - len(s)) + s
 
 
 def save_from_url(url=None, fname=None):

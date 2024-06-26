@@ -94,10 +94,12 @@ def parse_result(
     try:
         if mode == "teams":
             upd_team_results(row[0], db, contestant_scores, upsolving, key_base, solved)
-        elif mode == "junior":
+        elif mode == "juniors":
             upd_junior_results(
                 row[0], db, contestant_scores, upsolving, key_base, solved
             )
+        else:
+            raise RuntimeError("Unknown mode: " + mode)
     except BaseException as ex:
         if verbose:
             print(ex)
