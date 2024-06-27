@@ -28,10 +28,10 @@ def send_mail(
     msg["Subject"] = "Доступ на Codeforces"
     msg["From"] = config["mail"]
     msg["To"] = ", ".join(emails)
-    # smtp_server.send_message(msg)
+    smtp_server.send_message(msg)
     if verbose:
         print("Отправлено письмо", emails, nickname)
-    # time.sleep(5)
+    time.sleep(5)
 
 
 def send_cf_teams(smtp_server, verbose=True):

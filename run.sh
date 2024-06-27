@@ -1,3 +1,12 @@
+# Create data folder, if it does not exist
+mkdir -p data
+
+# Create config file, if it does not exist
+if ! [ -f cfg/config.json ]; then
+    echo "Creating example config..."
+    cp cfg/example.json cfg/config.json
+fi
+
 # Activate venv
 python3 -m venv .venv
 source .venv/bin/activate
@@ -13,5 +22,6 @@ sleep 5
 echo "Running script..."
 python3 main.py $1
 
+# Stop docker
 echo "Shutting down docker container..."
 docker compose down

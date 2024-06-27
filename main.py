@@ -2,6 +2,8 @@ import sys
 import scenarios
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        raise RuntimeError('Expected an argument, try "bash run.sh help"')
     opt = sys.argv[1]
     if opt == "reg_year" or opt == "reg_summer":
         scenarios.handle_reg(opt[4:])
