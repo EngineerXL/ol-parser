@@ -7,8 +7,8 @@ if __name__ == "__main__":
     opt = sys.argv[1]
     if opt == "reg_year" or opt == "reg_summer":
         scenarios.handle_reg(opt[4:])
-    elif opt == "mailing":
-        scenarios.handle_mailing()
+    elif opt == "mailing_year" or opt == "mailing_summer":
+        scenarios.handle_mailing(opt[8:])
     elif opt == "dump":
         scenarios.handle_dump()
     elif opt == "res_spring" or opt == "res_fall":

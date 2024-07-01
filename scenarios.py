@@ -47,10 +47,14 @@ def handle_dump():
         db.dump_members(fname_out=DATA_FOLDER + "dump_" + el + ".csv", course=el)
 
 
-def handle_mailing():
-    mailing.handle_mailing(mode="teams")
-    mailing.handle_mailing(mode="juniors")
-    mailing.handle_mailing(mode="summer")
+def handle_mailing(mode="year"):
+    if mode == "year":
+        mailing.handle_mailing(mode="teams")
+        mailing.handle_mailing(mode="juniors")
+    elif mode == "summer":
+        mailing.handle_mailing(mode="summer")
+    else:
+        raise RuntimeError("Unknown mode")
 
 
 def download_tables(todo, verbose=True):
@@ -279,7 +283,8 @@ def print_help():
     print("ol-parser keys:")
     print("reg_year: perform registration of teams and juniors")
     print("reg_summer: perform registration of summer practice juniors")
-    print("mailing: perform mailing")
+    print("mailing_year: perform mailing")
+    print("mailing_summer: perform mailing of summer practice")
     print("dump: dump students database into files")
     print("res_spring: calculate team and juniors spring term results")
     print("res_fall: calculate team and juniors fall term results")
