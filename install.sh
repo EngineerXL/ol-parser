@@ -14,11 +14,6 @@ echo \
 # Update sources
 sudo apt-get update
 
-# Install python3 and Docker
-sudo apt-get install -y make libpq-dev python3-full python3-pip docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Install docker
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 docker pull postgres
-
-# Install python3 libs
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade -r requirements.txt

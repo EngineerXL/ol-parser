@@ -1,8 +1,11 @@
 install:
 	bash install.sh
 
+build:
+	docker compose build parser
+
 clean:
-	docker volume rm ol-parser_db-volume-pg-ol
+	docker compose down -v
 
 clean-data:
 	rm -rf ./data/*

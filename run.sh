@@ -7,20 +7,9 @@ if ! [ -f cfg/config.json ]; then
     cp cfg/example.json cfg/config.json
 fi
 
-# Activate venv
-python3 -m venv .venv
-source .venv/bin/activate
-
 # Start docker
 echo "Starting docker container..."
-docker compose up -d
-
-# Wait for 5 seconds to let PostgreSQL initialize
-echo "Initializing PostgreSQL..."
-sleep 5
-
-echo "Running script..."
-python3 main.py $1
+docker compose run --rm parser $1
 
 # Stop docker
 echo "Shutting down docker container..."

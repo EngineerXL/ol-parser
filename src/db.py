@@ -15,7 +15,7 @@ from sqlalchemy_utils import EmailType
 import csv
 import groups_regex
 
-engine = create_engine("postgresql+psycopg2://pguser:pguser@localhost:25500/pgol")
+engine = create_engine("postgresql+psycopg2://pguser:pguser@pgdb:5432/pgol")
 
 
 def make_session():

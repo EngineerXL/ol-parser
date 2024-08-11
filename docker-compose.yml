@@ -5,13 +5,29 @@ services:
     volumes:
       - db-volume-pg-ol:/var/lib/postgresql/data
     ports:
-      - "25500:5432"
+      - "5432:5432"
     environment:
       POSTGRES_DB: pgol
       POSTGRES_USER: pguser
       POSTGRES_PASSWORD: pguser
     networks:
       - arch-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "pguser"]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+
+  parser:
+    image: parser
+    volumes:
+      - ./cfg:/app/cfg
+      - ./data:/app/data
+    networks:
+      - arch-network
+    depends_on:
+      pgdb:
+        condition: service_healthy
 
 volumes:
   db-volume-pg-ol:

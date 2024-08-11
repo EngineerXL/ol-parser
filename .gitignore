@@ -1,9 +1,7 @@
 ### Local files
 /.vscode
 config.json
-*.csv
-*.html
-*.txt
+/data
 
 ### Python
 # Byte-compiled / optimized / DLL files
